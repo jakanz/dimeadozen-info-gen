@@ -132,7 +132,7 @@ public class ShowInfo {
     public void setOtherFiles(Scanner scan) {
         boolean confirm = false, hasOtherFilesBlock = false;
         while (!confirm) {
-            System.out.print("Does this torrent have known lineage? [y/n] ");
+            System.out.print("Does this torrent have other files than music, info, and hash files? [y/n] ");
             switch (scan.nextLine().trim().toLowerCase()) {
                 case "y" -> {
                     confirm = true;
@@ -148,7 +148,7 @@ public class ShowInfo {
     public void setNotes(Scanner scan) {
         boolean confirm = false, hasNotes = false;
         while (!confirm) {
-            System.out.print("Does this torrent have known lineage? [y/n] ");
+            System.out.print("Does this torrent have notes (whether of the taper or uploader)? [y/n] ");
             switch (scan.nextLine().trim().toLowerCase()) {
                 case "y" -> {
                     confirm = true;
