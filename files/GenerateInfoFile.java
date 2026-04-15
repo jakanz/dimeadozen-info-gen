@@ -10,12 +10,38 @@ import java.util.Scanner;
  */
 public class GenerateInfoFile {
     public static void main(String[] args) {
+        flushTerminal();
+        printOpener();
+
+        Scanner scan = new Scanner(System.in);
+        confirmReady(scan);
+
+        // Vast majority of the program is hidden in class utilities... mweheheh!
+        ShowInfo show = new ShowInfo();
+        show.setContrastClause(scan);
+        show.setHeaderData(scan);
+        show.setTracklistData(scan);
+        show.setSources(scan);
+        show.setLineage(scan);
+        show.setOtherFiles(scan);
+        show.setNotes(scan);
+        scan.close();
+
+        Path path = Paths.get("info.txt");
+
+    }
+
+    private static void flushTerminal() {
         // Console flush for opener text (or give appearance of a flush... lol)
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+    
+    private static void printOpener() {
         System.out.println("(c) 2026 Amira Freeman via MIT License\n\nThis program is designed with the creator's personal info.txt preferences\nin mind, and will only output as such. Reformatting any information in the\nfinal product is your responsibility. As a final warning, the creator of\nthis program is not solely responsible for any mistakes or accidental\nomissions in your torrent submissions. It is your responsibility to\nensure your torrent does not violate DIME's Terms of Service, especially\nin regards to allowed artists, events, venues, and information requirements.\nhttp://wiki.dimeadozen.org\n");
+    }
 
-        Scanner scan = new Scanner(System.in);
+    private static void confirmReady(Scanner scan) {
         boolean confirmedReady = false;
         while (!confirmedReady) {
             System.out.print("This program is strictly for those whose files are ready to be published with\nthe exception of an info.txt file. Are these files already prepared? [y/n] ");
@@ -26,17 +52,5 @@ public class GenerateInfoFile {
             }
         }
         System.out.println();
-
-        // Vast majority of the program is hidden in class utilities... mweheheh!
-        ShowInfo show = new ShowInfo();
-        show.setContrastClause(scan);
-        show.setHeaderData(scan);
-        show.setTracklistData(scan);
-        show.setSources(scan);
-        show.setLineage(scan);
-
-        Path path = Paths.get("info.txt");
-
-        scan.close();
     }
 }

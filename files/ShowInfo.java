@@ -7,7 +7,7 @@ import java.util.Scanner;
  * @author Amira Freeman
  */
 public class ShowInfo {
-    private String contrastClause, artist, tour, date, venue, city, runtime, lineage;
+    private String contrastClause, artist, tour, date, venue, city, runtime, lineage, otherFilesSummary, notes;
     private ArrayList<String> tracklist = new ArrayList<>();
     private ArrayList<AudioSource> audioSources = new ArrayList<>();
     private ArrayList<VideoSource> videoSources = new ArrayList<>();
@@ -114,19 +114,51 @@ public class ShowInfo {
     }
     
     public void setLineage(Scanner scan) {
-        boolean lineageConfirmed = false, hasLineageBlock = false;
-        while (!lineageConfirmed) {
+        boolean confirm = false, hasLineageBlock = false;
+        while (!confirm) {
             System.out.print("Does this torrent have known lineage? [y/n] ");
             switch (scan.nextLine().trim().toLowerCase()) {
                 case "y" -> {
-                    lineageConfirmed = true;
+                    confirm = true;
                     hasLineageBlock = true;
                 }
-                case "n" -> lineageConfirmed = true;
+                case "n" -> confirm = true;
                 default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
             }
         }
         if (hasLineageBlock) { this.contrastClause = promptData("full lineage [A > B > C > ...]", scan); }
+    }
+
+    public void setOtherFiles(Scanner scan) {
+        boolean confirm = false, hasOtherFilesBlock = false;
+        while (!confirm) {
+            System.out.print("Does this torrent have known lineage? [y/n] ");
+            switch (scan.nextLine().trim().toLowerCase()) {
+                case "y" -> {
+                    confirm = true;
+                    hasOtherFilesBlock = true;
+                }
+                case "n" -> confirm = true;
+                default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
+            }
+        }
+        if (hasOtherFilesBlock) { this.otherFilesSummary = promptData("summary of other files present", scan); }
+    }
+
+    public void setNotes(Scanner scan) {
+        boolean confirm = false, hasNotes = false;
+        while (!confirm) {
+            System.out.print("Does this torrent have known lineage? [y/n] ");
+            switch (scan.nextLine().trim().toLowerCase()) {
+                case "y" -> {
+                    confirm = true;
+                    hasNotes = true;
+                }
+                case "n" -> confirm = true;
+                default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
+            }
+        }
+        if (hasNotes) { this.notes = promptData("full notes", scan); }
     }
 
     // public String toString() {
