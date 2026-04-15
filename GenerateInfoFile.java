@@ -13,7 +13,7 @@ public class GenerateInfoFile {
         try (Scanner scan = new Scanner(System.in)) {
             boolean confirmedReady = false;
             while (!confirmedReady) {
-                System.out.print("This program is strictly for those whose files are ready to be published with the exception of an info.txt file. Are these files already prepared [y/n]?");
+                System.out.print("This program is strictly for those whose files are ready to be published with the exception of an info.txt file. Are these files already prepared [y/n]? ");
                 switch (scan.nextLine().trim().toLowerCase()) {
                     case "y" -> confirmedReady = true;
                     case "n" -> System.exit(1);
@@ -22,6 +22,9 @@ public class GenerateInfoFile {
             }
         }
 
+        ShowInfo show = new ShowInfo();
+        show.setHeaderData();
+        show.setTracklistData();
 
         Path path = Paths.get("info.txt");
     }

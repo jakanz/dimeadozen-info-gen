@@ -2,29 +2,19 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Class utilities and objects for use in GenerateInfoFile.
+ * Class utilities and methods for use in GenerateInfoFile.
  * 
  * @author Amira Freeman
  */
 public class ShowInfo {
-    private static String artist, tour, date, venue, city;
-    private static ArrayList<String> tracklist;
-    private static boolean hasIntroTrack;
+    private String artist, tour, date, venue, city;
+    private ArrayList<String> tracklist;
+    private boolean hasIntroTrack;
 
-    public ShowInfo(String artist, String tour, String date, String venue, String city) {
-        ShowInfo.artist = artist;
-        ShowInfo.tour = tour;
-        ShowInfo.date = date;
-        ShowInfo.venue = venue;
-        ShowInfo.city = city;
+    public ShowInfo() {
+        // For my purposes, I don't believe anything needs to go here...
     }
 
-    /**
-     * Prints the basic message prompting for a type of data, to be followed
-     * by a variable assignment using the Scanner object from main.
-     * 
-     * @param type Type of data to prompt for (e.g. artist, date, city, etc.)
-     */
     private static void promptData(String type) {
         String extra = "";
         if (type.equals("tour")) { extra = " ['n' if not available]"; }
@@ -33,27 +23,23 @@ public class ShowInfo {
         System.out.print("Enter the " + type + extra + ": ");
     }
 
-    /**
-     * Uses the promptData() method to print a message, then assigns the object's
-     * variables via scanning the next line
-     */
-    public static void setHeaderData() {
+    public void setHeaderData() {
         // Not quite pretty but it works
         try (Scanner scan = new Scanner(System.in)) {
             promptData("artist");
-            ShowInfo.artist = scan.nextLine();
+            this.artist = scan.nextLine();
             
             promptData("tour");
-            if (!scan.nextLine().equals("n")) { ShowInfo.tour = scan.nextLine(); }
+            if (!scan.nextLine().equals("n")) { this.tour = scan.nextLine(); }
             
             promptData("date");
-            ShowInfo.date = scan.nextLine(); // Ideally in the form of yyyy-mm-dd, but this format changes across some users and is intentionally left unformatted
+            this.date = scan.nextLine();
             
             promptData("venue");
-            ShowInfo.venue = scan.nextLine();
+            this.venue = scan.nextLine();
             
             promptData("city");
-            ShowInfo.city = scan.nextLine(); // Ideally in the form of "City, [ST,] Country", but this format and data changes across some users
+            this.city = scan.nextLine();
         }
     }
 
@@ -62,41 +48,46 @@ public class ShowInfo {
             boolean introTrackConfirmed = false;
 
             while (!introTrackConfirmed) {
-                System.out.print("Do you have an introductory music file ('Intro', 'Banter', etc.) [y/n]? ");
+                System.out.print("Do you have an introductory music file ('Intro', 'Banter', etc.)? [y/n] ");
                 switch (scan.nextLine().trim().toLowerCase()) {
                     case "y" -> {
                         introTrackConfirmed = true;
-                        ShowInfo.hasIntroTrack = true;
+                        this.hasIntroTrack = true;
                     }
                     case "n" -> introTrackConfirmed = true;
                     default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
                 }
             }
-            if (ShowInfo.hasIntroTrack) { ShowInfo.tracklist.add("Intro"); }
+            if (this.hasIntroTrack) { this.tracklist.add("Intro"); }
         }
     }
 
-    public static void setTracklistData() {
+    public void setTracklistData() {
         determineIntroTrack();
         try (Scanner scan = new Scanner(System.in)) {
-            int tracklistLength = 0;
             String otherThanIntro = "";
-
             if (hasIntroTrack) { otherThanIntro = " [other than the intro track]"; }
             System.out.print("Enter the number of songs in your tracklist" + otherThanIntro + ": ");
-            tracklistLength = Integer.parseInt(scan.nextLine());
+            int tracklistLength = Integer.parseInt(scan.nextLine());
 
             for (int i = 0; i < tracklistLength; i++) {
-                ShowInfo.tracklist.add(scan.nextLine().trim());
+                System.out.print("Enter the title of the next track: ");
+                this.tracklist.add(scan.nextLine().trim());
             }
+
+            System.out.print("What is the total runtime of the tracklist? ");
         } 
     }
 
+    public void setSources() {
+
+    }
+
     // Get methods
-    public String getArtist() { return ShowInfo.artist; }
-    public String getTour() { return ShowInfo.tour; }
-    public String getDate() { return ShowInfo.date; }
-    public String getVenue() { return ShowInfo.venue; }
-    public String getCity() { return ShowInfo.city; }
-    public ArrayList<String> getTracklist() { return ShowInfo.tracklist; }
+    public String getArtist() { return this.artist; }
+    public String getTour() { return this.tour; }
+    public String getDate() { return this.date; }
+    public String getVenue() { return this.venue; }
+    public String getCity() { return this.city; }
+    public ArrayList<String> getTracklist() { return this.tracklist; }
 }
