@@ -10,22 +10,33 @@ import java.util.Scanner;
  */
 public class GenerateInfoFile {
     public static void main(String[] args) {
-        try (Scanner scan = new Scanner(System.in)) {
-            boolean confirmedReady = false;
-            while (!confirmedReady) {
-                System.out.print("This program is strictly for those whose files are ready to be published with the exception of an info.txt file. Are these files already prepared [y/n]? ");
-                switch (scan.nextLine().trim().toLowerCase()) {
-                    case "y" -> confirmedReady = true;
-                    case "n" -> System.exit(1);
-                    default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
-                }
+        // Console flush for opener text (or give appearance of a flush... lol)
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+        System.out.println("(c) 2026 Amira Freeman via MIT License\n\nThis program is designed with the creator's personal info.txt preferences\nin mind, and will only output as such. Reformatting any information in the\nfinal product is your responsibility. As a final warning, the creator of\nthis program is not solely responsible for any mistakes or accidental\nomissions in your torrent submissions. It is your responsibility to\nensure your torrent does not violate DIME's Terms of Service, especially\nin regards to allowed artists, events, venues, and information requirements.\nhttp://wiki.dimeadozen.org\n");
+
+        Scanner scan = new Scanner(System.in);
+        boolean confirmedReady = false;
+        while (!confirmedReady) {
+            System.out.print("This program is strictly for those whose files are ready to be published with\nthe exception of an info.txt file. Are these files already prepared? [y/n] ");
+            switch (scan.nextLine().trim().toLowerCase()) {
+                case "y" -> confirmedReady = true;
+                case "n" -> System.exit(1);
+                default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
             }
         }
+        System.out.println();
 
+        // Vast majority of the program is hidden in class utilities... mweheheh!
         ShowInfo show = new ShowInfo();
-        show.setHeaderData();
-        show.setTracklistData();
+        show.setContrastClause(scan);
+        show.setHeaderData(scan);
+        show.setTracklistData(scan);
+        show.setSources(scan);
+        show.setLineage(scan);
 
         Path path = Paths.get("info.txt");
+
+        scan.close();
     }
 }

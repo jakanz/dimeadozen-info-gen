@@ -7,51 +7,23 @@ import java.util.Scanner;
  * @author Amira Freeman
  */
 public class ShowInfo {
-    private String artist, tour, date, venue, city;
-    private ArrayList<String> tracklist;
+    private String contrastClause, artist, tour, date, venue, city, runtime, lineage;
+    private ArrayList<String> tracklist = new ArrayList<>();
+    private ArrayList<AudioSource> audioSources = new ArrayList<>();
+    private ArrayList<VideoSource> videoSources = new ArrayList<>();
     private boolean hasIntroTrack;
 
-    public ShowInfo() {
-        // Default values for the sake of avoiding errors
-        this.artist = "Placeholder";
-        this.tour = "Placeholder";
-        this.date = "Placeholder";
-        this.venue = "Placeholder";
-        this.city = "Placeholder";
-        this.tracklist = null;
-        this.hasIntroTrack = false;
+    public ShowInfo() {}
+
+    private static String promptData(String type, Scanner scan) {
+        System.out.print("Enter the " + type + ": ");
+        String data = scan.nextLine().trim();
+
+        if (data.equals("n") && type.equals("tour ['n' if not available]")) { return ""; }
+        return data;
     }
 
-    private static void promptData(String type) {
-        String extra = "";
-        if (type.equals("tour")) { extra = " ['n' if not available]"; }
-        if (type.equals("date")) { extra = " [yyyy-mm-dd]"; }
-        if (type.equals("city")) { extra = " [city, [subnational], country]"; } 
-        System.out.print("Enter the " + type + extra + ": ");
-    }
-
-    public void setHeaderData() {
-        // Not quite pretty but it works
-        try (Scanner scan = new Scanner(System.in)) {
-            promptData("artist");
-            this.artist = scan.nextLine();
-            
-            promptData("tour");
-            if (!scan.nextLine().equals("n")) { this.tour = scan.nextLine(); }
-            
-            promptData("date");
-            this.date = scan.nextLine();
-            
-            promptData("venue");
-            this.venue = scan.nextLine();
-            
-            promptData("city");
-            this.city = scan.nextLine();
-        }
-    }
-
-    private void determineIntroTrack() {
-        try (Scanner scan = new Scanner(System.in)) {
+    private void determineIntroTrack(Scanner scan) {
             boolean introTrackConfirmed = false;
 
             while (!introTrackConfirmed) {
@@ -66,35 +38,98 @@ public class ShowInfo {
                 }
             }
             if (this.hasIntroTrack) { this.tracklist.add("Intro"); }
+    }
+
+    public void setContrastClause(Scanner scan) {
+        boolean requiresContrast = false, contrastConfirmed = false;
+        while (!contrastConfirmed) {
+            System.out.print("Does this torrent require a contrast clause? [y/n] ");
+            switch (scan.nextLine().trim().toLowerCase()) {
+                case "y" -> {
+                    contrastConfirmed = true;
+                    requiresContrast = true;
+                }
+                case "n" -> contrastConfirmed = true;
+                default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
+            }
+        }
+        if (requiresContrast) { this.contrastClause = promptData("full contrast clause", scan); }
+    }
+
+    public void setHeaderData(Scanner scan) {
+        this.artist = promptData("name of the artist", scan);
+        this.tour = promptData("name of the tour ['n' if not applicable]", scan);
+        this.date = promptData("date of the event [yyyy-mm-dd]", scan);
+        this.venue = promptData("venue which the files were captured", scan);
+        this.city = promptData("city of the event [city, [subnational], country]", scan);
+        System.out.println();
+    }
+
+    public void setTracklistData(Scanner scan) {
+        determineIntroTrack(scan);
+
+        String otherThanIntro = "";
+        if (hasIntroTrack) { otherThanIntro = " [other than the intro track]"; }
+        System.out.print("Enter the number of songs in your tracklist" + otherThanIntro + ": ");
+        int tracklistLength = Integer.parseInt(scan.nextLine());
+
+        for (int i = 0; i < tracklistLength; i++) {
+            System.out.print("Enter the title of the next track: ");
+            this.tracklist.add(scan.nextLine().trim());
+        }
+
+        System.out.print("What is the total runtime of the tracklist? ");
+        this.runtime = scan.nextLine().trim();
+        System.out.println();
+    }
+
+    public void setSources(Scanner scan) {
+        boolean sourceComplete = false;
+        System.out.print("How many sources does your torrent originate from? ");
+        int numSources = Integer.parseInt(scan.nextLine());
+        for (int i = 0; i < numSources; i++) {
+            sourceComplete = false;
+            while (!sourceComplete) {
+                System.out.print("Is your source an audio or video source? [a/v] ");
+                switch (scan.nextLine().trim()) {
+                    case "v" -> {
+                        VideoSource video = new VideoSource();
+                        video.setSourceData(scan);
+                        this.videoSources.add(video);
+                        sourceComplete = true;
+                    }
+                    case "a" -> {
+                        AudioSource audio = new AudioSource();
+                        audio.setSourceData(scan);
+                        this.audioSources.add(audio);
+                        sourceComplete = true;
+                    }
+                    default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
+                }
+            }
+            String nextSectionTransition = "\n";
+            if (i != numSources - 1) { nextSectionTransition = "Moving to next source...\n"; }
+            System.out.println(nextSectionTransition);
         }
     }
-
-    public void setTracklistData() {
-        determineIntroTrack();
-        try (Scanner scan = new Scanner(System.in)) {
-            String otherThanIntro = "";
-            if (hasIntroTrack) { otherThanIntro = " [other than the intro track]"; }
-            System.out.print("Enter the number of songs in your tracklist" + otherThanIntro + ": ");
-            int tracklistLength = Integer.parseInt(scan.nextLine());
-
-            for (int i = 0; i < tracklistLength; i++) {
-                System.out.print("Enter the title of the next track: ");
-                this.tracklist.add(scan.nextLine().trim());
+    
+    public void setLineage(Scanner scan) {
+        boolean lineageConfirmed = false, hasLineageBlock = false;
+        while (!lineageConfirmed) {
+            System.out.print("Does this torrent have known lineage? [y/n] ");
+            switch (scan.nextLine().trim().toLowerCase()) {
+                case "y" -> {
+                    lineageConfirmed = true;
+                    hasLineageBlock = true;
+                }
+                case "n" -> lineageConfirmed = true;
+                default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
             }
-
-            System.out.print("What is the total runtime of the tracklist? ");
-        } 
+        }
+        if (hasLineageBlock) { this.contrastClause = promptData("full lineage [A > B > C > ...]", scan); }
     }
 
-    public void setSources() {
-
-    }
-
-    // Get methods
-    public String getArtist() { return this.artist; }
-    public String getTour() { return this.tour; }
-    public String getDate() { return this.date; }
-    public String getVenue() { return this.venue; }
-    public String getCity() { return this.city; }
-    public ArrayList<String> getTracklist() { return this.tracklist; }
+    // public String toString() {
+    //     // TODO return whole file as string
+    // }
 }
