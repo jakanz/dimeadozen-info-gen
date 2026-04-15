@@ -10,25 +10,17 @@ import java.util.Scanner;
  */
 public class GenerateInfoFile {
     public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        ShowInfo show = new ShowInfo();
+
         flushTerminal();
         printOpener();
-
-        Scanner scan = new Scanner(System.in);
         confirmReady(scan);
-
-        // Vast majority of the program is hidden in class utilities... mweheheh!
-        ShowInfo show = new ShowInfo();
-        show.setContrastClause(scan);
-        show.setHeaderData(scan);
-        show.setTracklistData(scan);
-        show.setSources(scan);
-        show.setLineage(scan);
-        show.setOtherFiles(scan);
-        show.setNotes(scan);
+        setAllValues(show, scan);
         scan.close();
 
         Path path = Paths.get("info.txt");
-
+        System.out.println(show.toString());
     }
 
     private static void flushTerminal() {
@@ -52,5 +44,15 @@ public class GenerateInfoFile {
             }
         }
         System.out.println();
+    }
+
+    private static void setAllValues(ShowInfo show, Scanner scan) {
+        show.setContrastClause(scan);
+        show.setHeaderData(scan);
+        show.setTracklistData(scan);
+        show.setSources(scan);
+        show.setLineage(scan);
+        show.setOtherFiles(scan);
+        show.setNotes(scan);
     }
 }

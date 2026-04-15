@@ -7,11 +7,11 @@ import java.util.Scanner;
  * @author Amira Freeman
  */
 public class ShowInfo {
-    private String contrastClause, artist, tour, date, venue, city, runtime, lineage, otherFilesSummary, notes;
+    private String contrastClause, artist, tour, date, venue, city, runtime, lineage, otherFilesSummary, notes, introName;
     private ArrayList<String> tracklist = new ArrayList<>();
     private ArrayList<AudioSource> audioSources = new ArrayList<>();
     private ArrayList<VideoSource> videoSources = new ArrayList<>();
-    private boolean hasIntroTrack;
+    private boolean hasIntroTrack, hasContrastClause;
 
     public ShowInfo() {}
 
@@ -37,23 +37,28 @@ public class ShowInfo {
                     default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
                 }
             }
-            if (this.hasIntroTrack) { this.tracklist.add("Intro"); }
+            String introName = promptData("name of the intro track", scan);
+            if (this.hasIntroTrack) { this.introName = introName; }
+    }
+
+    private void sortSources() {
+
     }
 
     public void setContrastClause(Scanner scan) {
-        boolean requiresContrast = false, contrastConfirmed = false;
-        while (!contrastConfirmed) {
+        boolean confirm = false;
+        while (!confirm) {
             System.out.print("Does this torrent require a contrast clause? [y/n] ");
             switch (scan.nextLine().trim().toLowerCase()) {
                 case "y" -> {
-                    contrastConfirmed = true;
-                    requiresContrast = true;
+                    confirm = true;
+                    hasContrastClause = true;
                 }
-                case "n" -> contrastConfirmed = true;
+                case "n" -> confirm = true;
                 default -> System.out.println("What you entered could not be parsed by the program. Please try again.");
             }
         }
-        if (requiresContrast) { this.contrastClause = promptData("full contrast clause", scan); }
+        if (hasContrastClause) { this.contrastClause = promptData("full contrast clause", scan); }
     }
 
     public void setHeaderData(Scanner scan) {
@@ -68,10 +73,17 @@ public class ShowInfo {
     public void setTracklistData(Scanner scan) {
         determineIntroTrack(scan);
 
+        int tracklistLength = 0;
         String otherThanIntro = "";
+        boolean hasValidTrackNumber = false;
         if (hasIntroTrack) { otherThanIntro = " [other than the intro track]"; }
-        System.out.print("Enter the number of songs in your tracklist" + otherThanIntro + ": ");
-        int tracklistLength = Integer.parseInt(scan.nextLine());
+        while (!hasValidTrackNumber) {
+            System.out.print("Enter the number of songs in your tracklist" + otherThanIntro + ": ");
+            tracklistLength = Integer.parseInt(scan.nextLine());
+            if (tracklistLength == 0) { System.out.println("Tracklist length is too small to be valid! Please try again."); }
+            else { hasValidTrackNumber = true; }
+        }
+        
 
         for (int i = 0; i < tracklistLength; i++) {
             System.out.print("Enter the title of the next track: ");
@@ -84,14 +96,14 @@ public class ShowInfo {
     }
 
     public void setSources(Scanner scan) {
-        boolean sourceComplete = false;
+        boolean sourceComplete;
         System.out.print("How many sources does your torrent originate from? ");
         int numSources = Integer.parseInt(scan.nextLine());
         for (int i = 0; i < numSources; i++) {
             sourceComplete = false;
             while (!sourceComplete) {
                 System.out.print("Is your source an audio or video source? [a/v] ");
-                switch (scan.nextLine().trim()) {
+                switch (scan.nextLine().trim().toLowerCase()) {
                     case "v" -> {
                         VideoSource video = new VideoSource();
                         video.setSourceData(scan);
@@ -161,7 +173,17 @@ public class ShowInfo {
         if (hasNotes) { this.notes = promptData("full notes", scan); }
     }
 
-    // public String toString() {
-    //     // TODO return whole file as string
-    // }
+    @Override
+    public String toString() {
+        String fnlString = "";
+        if (hasContrastClause) { fnlString += "Contrast clause: " + contrastClause + "\n\n"; }
+        fnlString += artist + "\n" + tour + "\n" + date + "\n" + venue + "\n" + city + "\n\n";
+        fnlString += "=== SETLIST ===\n";
+        if (hasIntroTrack) { fnlString += "00. " + introName + "\n"; }
+        for (int i = 0; i < tracklist.size(); i++) { fnlString += String.format("%02d", (i + 1)) + ". " + tracklist.get(i) + "\n"; }
+        fnlString += "\nTotal runtime: " + runtime + "\n\n";
+        fnlString += "=== SOURCES ===\n";
+
+        return fnlString;
+    }
 }
