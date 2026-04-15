@@ -12,7 +12,14 @@ public class ShowInfo {
     private boolean hasIntroTrack;
 
     public ShowInfo() {
-        // For my purposes, I don't believe anything needs to go here...
+        // Default values for the sake of avoiding errors
+        this.artist = "Placeholder";
+        this.tour = "Placeholder";
+        this.date = "Placeholder";
+        this.venue = "Placeholder";
+        this.city = "Placeholder";
+        this.tracklist = null;
+        this.hasIntroTrack = false;
     }
 
     private static void promptData(String type) {
@@ -43,7 +50,7 @@ public class ShowInfo {
         }
     }
 
-    private static void determineIntroTrack() {
+    private void determineIntroTrack() {
         try (Scanner scan = new Scanner(System.in)) {
             boolean introTrackConfirmed = false;
 
